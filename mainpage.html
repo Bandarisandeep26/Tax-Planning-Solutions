@@ -71,33 +71,26 @@
   <!-- main section -->
 
   <section id="hero" style="background-color: white;">
-    <!-- <h1 class="container d-flex align-items-center"  > Upload Your Salary Slip</h1> -->
-    
-    <div class="carousel-container" style="
-    background-color: white;
-    ">
+    <div class="carousel-container" style="background-color: white;">
       <div class="container d-flex align-items-center" style="width: 50rem; height: 20rem; background-color:#66347F;
-      border-radius: 9px;
-      /* border: 2px dotted whitesmoke; */
-      outline: 2px dotted #66347f; 
-      outline-offset: 10px;
-      "> 
-
-<div class="custom-file mb-3 " style="margin: 0 auto;">
-  <form id="myForm" enctype="multipart/form-data">
-    <input type="file" name="pdfFile" id="pdfFile">
-    <input type="submit" value="Upload Salary Slip">
-  </form>
-  <div style="margin-top: 20px;">
-    <div class="text-center"><button type="submit">Get Details</button></div>
-  </div>
-</div>
-    </div>
+        border-radius: 9px;
+        /* border: 2px dotted whitesmoke; */
+        outline: 2px dotted #66347f; 
+        outline-offset: 10px;"> 
+  
+        <div class="custom-file mb-3 " style="margin: 0 auto;">
+          <form id="myForm" enctype="multipart/form-data">
+            <input type="file" name="pdfFile" id="pdfFile">
+            <input type="submit" value="Upload Salary Slip">
+          </form>
+          <div style="margin-top: 20px;">
+            <div class="text-center"><button type="button" id="getDetailsBtn">Get Details</button></div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
-
-
-
+  
   <!-- ======= Footer ======= -->
   <footer id="footer">
     <div class="footer-top">
@@ -174,4 +167,77 @@
 </body>
 
 </html>
+
+  <script>
+    const form = document.getElementById('myForm');
+    const getDetailsBtn = document.getElementById('getDetailsBtn');
   
+    form.addEventListener('submit', (event) => {
+      event.preventDefault(); // prevent the default form submission
+  
+      const fileInput = document.getElementById('pdfFile');
+      const file = fileInput.files[0]; // get the selected file from the input field
+  
+      const formData = new FormData(); // create a new form data object
+      formData.append('pdfFile', file); // add the file to the form data object
+  
+      fetch('https://example.com/api/upload', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Display the employee name and company name on the page
+      const employeeName = data.employeeName;
+      const companyName = data.companyName;
+      const detailsContainer = document.createElement('div');
+      detailsContainer.innerHTML = `<p>Employee Name: ${employeeName}</p><p>Company Name: ${companyName}</p>`;
+      document.body.appendChild(detailsContainer);
+    })
+      .catch(error => {
+        // Handle any errors
+        console.error(error);
+      });
+    });
+  
+    getDetailsBtn.addEventListener('click', () => {
+  fetch('https://example.com/api/details')
+    .then(response => response.json())
+    .then(data => {
+      // Display the employee name and company name on the page
+      const employeeName = data.employeeName;
+      const companyName = data.companyName;
+      const detailsContainer = document.createElement('div');
+      detailsContainer.innerHTML = `<p>Employee Name: ${employeeName}</p><p>Company Name: ${companyName}</p><button id="calculateTaxBtn">Calculate Tax</button>`;
+      document.body.appendChild(detailsContainer);
+
+      const calculateTaxBtn = document.getElementById('calculateTaxBtn');
+      calculateTaxBtn.addEventListener('click', () => {
+        fetch('https://example.com/api/tax', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            employeeName: employeeName,
+            companyName: companyName
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Display the tax information on the page
+          const taxInfoContainer = document.createElement('div');
+          taxInfoContainer.innerHTML = `<p>Tax Rate: ${data.taxRate}</p><p>Tax Amount: ${data.taxAmount}</p>`;
+          document.body.appendChild(taxInfoContainer);
+        })
+        .catch(error => {
+          // Handle any errors
+          console.error(error);
+        });
+      });
+    })
+    .catch(error => {
+      // Handle any errors
+      console.error(error);
+    });
+});
