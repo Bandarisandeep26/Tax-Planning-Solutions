@@ -16,7 +16,7 @@ This website is built using HTML, CSS, and JavaScript. It also uses the Bootstra
 
 Installation
 To install this website on your local machine, simply clone the repository
-git clone https://github.com/yourusername/tax-planning-website.git
+git clone https://github.com/Bandarisandeep26/Tax-Planning-Solutions
 Then, open the index.html file in your web browser to view the website.
 
 Contributing
